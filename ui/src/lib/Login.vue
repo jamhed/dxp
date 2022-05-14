@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row">
-      <div class="col" v-if="isAuthenticated()"></div>
+      <div class="col" v-if="isAuth"></div>
       <div class="col" v-else>
         <q-btn @click="loginWithRedirect" label="Login" icon="login" />
       </div>
@@ -10,9 +10,8 @@
 </template>
 
 <script setup lang="ts">
-function isAuthenticated(): boolean {
-  return true
-}
+import { useAuth } from "../auth"
+const { isAuth } = useAuth()
 
 function loginWithRedirect() {
 }

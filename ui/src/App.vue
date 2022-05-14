@@ -4,10 +4,10 @@
       <q-header elevated class="bg-black">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
-          <q-toolbar-title>DXP</q-toolbar-title>
+          <q-toolbar-title>dxp</q-toolbar-title>
         </q-toolbar>
       </q-header>
-      <q-drawer v-model="drawer" show-if-above :width="200" :breakpoint="500">
+      <q-drawer v-if="isAuth" v-model="drawer" show-if-above :width="200" :breakpoint="500">
         <q-scroll-area class="fit">
           <q-list padding class="menu-list">
             <q-item clickable to="/profile">
@@ -22,7 +22,7 @@
               </q-item-section>
               <q-item-section>Token</q-item-section>
             </q-item>
-            <q-item v-if="isAuth" clickable to="/logout">
+            <q-item clickable to="/logout">
               <q-item-section avatar>
                 <q-icon name="logout" />
               </q-item-section>
