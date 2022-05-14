@@ -1,0 +1,69 @@
+{
+  "name": "app",
+  "version": "0.1.62",
+  "private": true,
+  "scripts": {
+    "serve": "vite preview",
+    "build": "vue-tsc --noEmit && vite build",
+    "lint": "vue-cli-service lint",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.5.10",
+    "@auth0/auth0-vue": "^1.0.0",
+    "@quasar/extras": "^1.13.5",
+    "@vue/apollo-composable": "^4.0.0-alpha.16",
+    "core-js": "^3.22.0",
+    "graphql-tag": "^2.12.6",
+    "jsoneditor": "^9.7.4",
+    "jwt-decode": "^3.1.2",
+    "quasar": "^2.6.6",
+    "vue": "^3.2.33",
+    "vue-class-component": "^8.0.0-0",
+    "vue-router": "^4.0.14"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/eslint-parser": "^7.17.0",
+    "@quasar/vite-plugin": "^1.0.9",
+    "@types/jsoneditor": "^9.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
+    "@vitejs/plugin-vue": "^2.3.1",
+    "@vue/cli-plugin-babel": "~5.0.4",
+    "@vue/cli-plugin-eslint": "~5.0.4",
+    "@vue/cli-plugin-typescript": "~5.0.4",
+    "@vue/cli-service": "~5.0.4",
+    "@vue/eslint-config-typescript": "^10.0.0",
+    "eslint": "^8.13.0",
+    "eslint-plugin-vue": "^8.6.0",
+    "sass": "^1.32.0",
+    "sass-loader": "^12.6.0",
+    "typescript": "~4.6.3",
+    "vite": "^2.9.5",
+    "vite-plugin-html": "^3.2.0",
+    "vue-cli-plugin-mdb5": "~1.2.0",
+    "vue-cli-plugin-quasar": "~5.0.1",
+    "vue-tsc": "^0.34.7"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "@vue/typescript"
+    ],
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}
