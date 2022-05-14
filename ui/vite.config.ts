@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import { createHtmlPlugin } from 'vite-plugin-html'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   preview: {
     port: 8080
@@ -11,6 +10,7 @@ export default defineConfig({
   server: {
     port: 8080
   },
+  base: "/ui/",
   plugins: [vue({
     template: { transformAssetUrls }
   }),
@@ -23,7 +23,7 @@ export default defineConfig({
     template: 'public/index.html',
     inject: {
       data: {
-        title: 'AppVue',
+        title: 'dxp',
       },
     },
   }),
