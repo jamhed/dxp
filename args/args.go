@@ -51,7 +51,7 @@ func (a *Args) Parse() *Args {
 	flag.StringVar(&a.oidcClientID, "oidc-client-id", os.Getenv("OIDC_CLIENT_ID"), "OIDC client id")
 	flag.StringVar(&a.oidcClientSecret, "oidc-client-secret", os.Getenv("OIDC_CLIENT_SECRET"), "OIDC client secret")
 	flag.StringVar(&a.oidcRedirectURL, "oidc-redirect-url", os.Getenv("OIDC_REDIRECT_URL"), "OIDC redirect url")
-	flag.StringVar(&a.oidcScopes, "oidc-scopes", getEnvOrDefault("OIDC_SCOPES", "groups"), "OIDC scopes")
+	flag.StringVar(&a.oidcScopes, "oidc-scopes", getEnvOrDefault("OIDC_SCOPES", "roles"), "OIDC scopes")
 	flag.StringVar(&a.oidcUserId, "oidc-user-id", getEnvOrDefault("OIDC_USER_ID", "preferred_username"), "OIDC user id field")
 	flag.StringVar(&a.uiRootURL, "ui-root-url", getEnvOrDefault("UI_ROOT_URL", "http://localhost:8080/ui/#/"), "UI root url for redirects")
 	flag.StringVar(&a.baseDomain, "base-domain", getEnvOrDefault("BASE_DOMAIN", ""), "Base domain to base ingress on")

@@ -20,22 +20,6 @@ type BrokerDef struct {
 	Resource string
 }
 
-func (a *App) Logout(w http.ResponseWriter, r *http.Request) {
-	session, err := a.store.Get(r, "auth-session")
-	if err != nil {
-		http.Redirect(w, r, a.args.UIRootURL(), http.StatusFound)
-		return
-	}
-	delete(session.Values, "state")
-	delete(session.Values, "auth-session")
-	delete(session.Values, "profile")
-	session.Options.MaxAge = -1
-	if err = session.Save(r, w); err != nil {
-		log.Errorf("Can't delete session, error:%s", err)
-	}
-	http.Redirect(w, r, a.args.UIRootURL(), http.StatusFound)
-}
-
 func (a *App) AuthInitiate(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
@@ -44,11 +28,11 @@ func (a *App) AuthInitiate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirect := r.URL.Query().Get("redirect")
-
 	state := base64.StdEncoding.EncodeToString(b)
 	session, _ := a.store.Get(r, "auth-session")
 	session.Values["state"] = state
+
+	redirect := r.URL.Query().Get("redirect")
 	if len(redirect) > 0 {
 		unescape, err := url.PathUnescape(redirect)
 		if err == nil {
@@ -60,6 +44,7 @@ func (a *App) AuthInitiate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = session.Save(r, w); err != nil {
+		log.Errorf("save session:%s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -74,6 +59,10 @@ func (a *App) AuthCallback(w http.ResponseWriter, r *http.Request) *appError {
 
 	if r.URL.Query().Get("state") != session.Values["state"] {
 		return makeError(http.StatusBadRequest, "Can't get proper state value from request")
+	}
+
+	if len(r.URL.Query().Get("error")) > 0 {
+		return makeError(http.StatusInternalServerError, "Error reply from OIDC provider:%s", r.URL.Query().Get("error_description"))
 	}
 
 	token, err := a.auth.Config.Exchange(context.TODO(), r.URL.Query().Get("code"))
@@ -113,6 +102,22 @@ func (a *App) AuthCallback(w http.ResponseWriter, r *http.Request) *appError {
 		fmt.Fprintf(w, redirect, a.args.UIRootURL())
 	}
 	return nil
+}
+
+func (a *App) Logout(w http.ResponseWriter, r *http.Request) {
+	session, err := a.store.Get(r, "auth-session")
+	if err != nil {
+		http.Redirect(w, r, a.args.UIRootURL(), http.StatusFound)
+		return
+	}
+	delete(session.Values, "state")
+	delete(session.Values, "auth-session")
+	delete(session.Values, "profile")
+	session.Options.MaxAge = -1
+	if err = session.Save(r, w); err != nil {
+		log.Errorf("Can't delete session, error:%s", err)
+	}
+	http.Redirect(w, r, a.args.UIRootURL(), http.StatusFound)
 }
 
 func (a *App) userInfo(token *oauth2.Token) (map[string]interface{}, error) {

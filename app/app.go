@@ -28,7 +28,7 @@ type App struct {
 func New() *App {
 	a := new(App)
 	a.args = args.New().LogLevel()
-	a.store = sessions.NewFilesystemStore("sessions")
+	a.store = sessions.NewFilesystemStore("sessions", []byte(a.args.SessionKey()))
 	a.store.Options.Domain = a.args.BaseDomain()
 	gob.Register(map[string]interface{}{})
 	go a.Serve()

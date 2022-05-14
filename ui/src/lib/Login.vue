@@ -14,6 +14,6 @@ import { useAuth } from "../auth"
 const { isAuth } = useAuth()
 
 function loginWithRedirect() {
-  fetch('/auth')
+  window.location.href = '/auth'
 }
 </script>
