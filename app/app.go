@@ -76,15 +76,24 @@ func (fn httpErrHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Profile(w http.ResponseWriter, r *http.Request) {
-	var p interface{}
 	session, err := a.store.Get(r, "auth-session")
 	if err != nil {
 		log.Debugf("Can't get session, error:%s", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	p = session.Values["profile"]
-	obj, err := json.Marshal(p)
+	obj, err := json.Marshal(session.Values["profile"])
+	w.Write([]byte(obj))
+}
+
+func (a *App) Token(w http.ResponseWriter, r *http.Request) {
+	session, err := a.store.Get(r, "auth-session")
+	if err != nil {
+		log.Debugf("Can't get session, error:%s", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	obj, err := json.Marshal(session.Values["token"])
 	w.Write([]byte(obj))
 }
 
