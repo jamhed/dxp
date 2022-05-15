@@ -4,6 +4,7 @@
       <div class="col" v-if="isAuth"></div>
       <div class="col" v-else>
         <q-btn @click="loginWithRedirect" label="Login" icon="login" />
+        <q-btn @click="profile" label="Profile" icon="profile" />
       </div>
     </div>
   </div>
@@ -15,5 +16,9 @@ const { isAuth } = useAuth()
 
 function loginWithRedirect() {
   window.location.href = '/auth'
+}
+
+function profile() {
+  fetch("/profile")
 }
 </script>

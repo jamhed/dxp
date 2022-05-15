@@ -4,6 +4,7 @@ import (
 	"dxp/args"
 	"dxp/auth"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sync"
@@ -29,6 +30,7 @@ func New() *App {
 	a := new(App)
 	a.args = args.New().LogLevel()
 	a.store = sessions.NewFilesystemStore("sessions", []byte(a.args.SessionKey()))
+	a.store.MaxLength(0)
 	a.store.Options.Domain = a.args.BaseDomain()
 	gob.Register(map[string]interface{}{})
 	go a.Serve()
@@ -73,6 +75,19 @@ func (fn httpErrHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (a *App) Profile(w http.ResponseWriter, r *http.Request) {
+	var p interface{}
+	session, err := a.store.Get(r, "auth-session")
+	if err != nil {
+		log.Debugf("Can't get session, error:%s", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	p = session.Values["profile"]
+	obj, err := json.Marshal(p)
+	w.Write([]byte(obj))
+}
+
 func (a *App) Serve() {
 	a.wg.Add(1)
 	defer a.wg.Done()
@@ -81,6 +96,7 @@ func (a *App) Serve() {
 	r := mux.NewRouter()
 	r.PathPrefix("/ui/").Handler(http.StripPrefix("/ui/", http.FileServer(http.Dir(a.args.Dir()))))
 	r.HandleFunc("/auth", a.AuthInitiate)
+	r.HandleFunc("/profile", a.Profile)
 	r.Handle("/callback", httpErrHandler(a.AuthCallback))
 	r.HandleFunc("/logout", a.Logout)
 	srv := &http.Server{

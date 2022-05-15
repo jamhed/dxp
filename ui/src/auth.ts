@@ -1,9 +1,9 @@
 import { Ref, ref } from 'vue'
 
 class Auth {
-  registered: Ref<boolean>
+  authenticated: Ref<boolean>
   constructor(readonly url: string) {
-    this.registered = ref(false)
+    this.authenticated = ref(false)
   }
 
   checkAuth = async () => {
@@ -16,9 +16,9 @@ class Auth {
     })
     const user = await re.json()
     if (user.user && user.user[0]) {
-      this.registered.value = true
+      this.authenticated.value = true
     } else {
-      this.registered.value = false
+      this.authenticated.value = false
     }
   }
 }
@@ -27,7 +27,7 @@ let isAuth: Ref<boolean>
 let checkAuth: () => any
 
 export function createAuth(url: string) {
-  ({ registered: isAuth, checkAuth } = new Auth(url))
+  ({ authenticated: isAuth, checkAuth } = new Auth(url))
 }
 
 export function useAuth() {

@@ -80,12 +80,14 @@ func (a *App) AuthCallback(w http.ResponseWriter, r *http.Request) *appError {
 		return makeError(http.StatusInternalServerError, "Can't verify token, error:%s", err)
 	}
 
-	var idTokenClaims map[string]interface{}
-	if err := idToken.Claims(&idTokenClaims); err != nil {
+	var profile map[string]interface{}
+	if err := idToken.Claims(&profile); err != nil {
 		return makeError(http.StatusInternalServerError, "Can't decode token claims, error:%s", err)
 	}
 
-	log.Debugf("OIDC: id token claims: %s", idTokenClaims)
+	log.Debugf("OIDC: id token claims: %s", profile)
+	session.Values["profile"] = profile
+	session.Values["access_token"] = token.AccessToken
 
 	redirectUrl := session.Values["redirect"]
 	delete(session.Values, "redirect")
