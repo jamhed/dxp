@@ -1,11 +1,17 @@
 <template>
   <div class="q-pa-md">
-    <div class="row">
-      <div class="col" v-if="isAuthenticated"></div>
-      <div class="col" v-else>
-        <q-btn @click="login" label="Login" icon="login" />
-      </div>
-    </div>
+    <q-card class="fixed-center">
+      <q-card-section>
+        <div class="text-h6">Please authenticate</div>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions vertical>
+        <q-btn v-if="!isAuthenticated" @click="login" label="Login" icon="login" />
+      </q-card-actions>
+    </q-card>
+
   </div>
 </template>
 
