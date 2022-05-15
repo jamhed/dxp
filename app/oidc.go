@@ -88,6 +88,7 @@ func (a *App) AuthCallback(w http.ResponseWriter, r *http.Request) *appError {
 	log.Debugf("OIDC: id token claims: %s", profile)
 	session.Values["profile"] = profile
 	session.Values["access_token"] = token.AccessToken
+	log.Debugf("OIDC: token:%s", token.AccessToken)
 
 	redirectUrl := session.Values["redirect"]
 	delete(session.Values, "redirect")

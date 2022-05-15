@@ -1,35 +1,45 @@
 import { Ref, ref } from 'vue'
 
 class Auth {
-  authenticated: Ref<boolean>
+  isAuthenticated: Ref<boolean>
+
   constructor(readonly url: string) {
-    this.authenticated = ref(false)
+    this.isAuthenticated = ref(false)
   }
 
   checkAuth = async () => {
-    const token = localStorage.getItem('token')
+    var profile = localStorage.getItem('profile')
+    if (profile) {
+      this.isAuthenticated.value = true
+      return
+    }
     const re = await fetch(this.url, {
       headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${token}`
+        'Content-Type': 'application/json'
       }
     })
-    const user = await re.json()
-    if (user.user && user.user[0]) {
-      this.authenticated.value = true
-    } else {
-      this.authenticated.value = false
+    profile = await re.json()
+    if (profile) {
+      localStorage.setItem('profile', JSON.stringify(profile))
+      this.isAuthenticated.value = true
+      return
     }
+    this.isAuthenticated.value = false
+  }
+
+  profile() {
+    return JSON.parse(localStorage.getItem('profile') || "{}")
   }
 }
 
-let isAuth: Ref<boolean>
+let isAuthenticated: Ref<boolean>
 let checkAuth: () => any
+let profile: () => any
 
 export function createAuth(url: string) {
-  ({ authenticated: isAuth, checkAuth } = new Auth(url))
+  ({ isAuthenticated, checkAuth, profile } = new Auth(url))
 }
 
 export function useAuth() {
-  return { isAuth, checkAuth }
+  return { isAuthenticated, checkAuth, profile }
 }

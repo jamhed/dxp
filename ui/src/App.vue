@@ -7,7 +7,7 @@
           <q-toolbar-title>dxp</q-toolbar-title>
         </q-toolbar>
       </q-header>
-      <q-drawer v-if="isAuth" v-model="drawer" show-if-above :width="200" :breakpoint="500">
+      <q-drawer v-if="isAuthenticated" v-model="drawer" show-if-above :width="200" :breakpoint="500">
         <q-scroll-area class="fit">
           <q-list padding class="menu-list">
             <q-item clickable to="/profile">
@@ -46,6 +46,5 @@ import { ref } from "vue"
 
 const drawer = ref(false)
 
-const { isAuth } = useAuth()
-
+const { isAuthenticated } = useAuth()
 </script>
