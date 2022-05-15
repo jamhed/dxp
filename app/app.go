@@ -106,6 +106,7 @@ func (a *App) Serve() {
 	r.PathPrefix("/ui/").Handler(http.StripPrefix("/ui/", http.FileServer(http.Dir(a.args.Dir()))))
 	r.HandleFunc("/auth", a.AuthInitiate)
 	r.HandleFunc("/profile", a.Profile)
+	r.HandleFunc("/token", a.Token)
 	r.Handle("/callback", httpErrHandler(a.AuthCallback))
 	r.HandleFunc("/logout", a.Logout)
 	srv := &http.Server{
