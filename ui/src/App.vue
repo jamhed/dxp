@@ -24,7 +24,7 @@
             </q-item>
             <q-item clickable to="/pods">
               <q-item-section avatar>
-                <q-icon name="pod" />
+                <q-icon name="bookmarks" />
               </q-item-section>
               <q-item-section>Pods</q-item-section>
             </q-item>

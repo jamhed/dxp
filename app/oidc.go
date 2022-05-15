@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/coreos/go-oidc"
 	log "github.com/sirupsen/logrus"
@@ -28,11 +29,10 @@ func (a *App) onLogin(sessionId string, profile map[string]interface{}) {
 		{"services", "", "v1", "services"},
 		{"pods", "", "v1", "pods"},
 	}
-	groups := profile["groups"].([]interface{})
-	owner := ""
-	// groupSelector := fmt.Sprintf("%s in (%s)", constant.GroupLabel, strings.Join(groups, ","))
-	groupSelector := ""
-	selector := fmt.Sprintf("%s in (%s)", constant.IdLabel, owner)
+	groups := profileGroups(profile)
+	log.Infof("%s", groups)
+	groupSelector := fmt.Sprintf("%s in (%s)", constant.GroupLabel, strings.Join(groups, ","))
+	selector := fmt.Sprintf("%s in (%s)", constant.IdLabel, profileUser(profile))
 	for _, def := range brokerDefs {
 		broker := a.newBroker(sessionId, def.Name)
 		if len(groups) > 0 {

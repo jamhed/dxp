@@ -104,7 +104,7 @@ func (a *App) proxyService(w http.ResponseWriter, r *http.Request) *appError {
 		return nil
 	}
 
-	if !Authorize(svc, pf["preferred_username"].(string), pf["groups"].([]string)) {
+	if !Authorize(svc, profileUser(pf), profileGroups(pf)) {
 		return makeError(http.StatusForbidden, "Proxy: %s/%s, no auth, access denied", namespace, name)
 	}
 

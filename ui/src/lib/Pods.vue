@@ -53,7 +53,6 @@ function setupStream() {
         delete cache[obj.metadata.uid]
         break
       case "add":
-        console.log(obj)
         cache[obj.metadata.uid] = obj
         break
       case "update":
