@@ -10,12 +10,12 @@ import (
 func (a *App) watchObject(sid string, profile map[string]interface{}, w http.ResponseWriter, r *http.Request) *appError {
 	v := mux.Vars(r)
 	kind, name, namespace := v["kind"], v["name"], v["namespace"]
-	if err := authObj(kind, name, namespace, profile["preferred_email"].(string), profile["groups"].([]string)); err != nil {
-		return err
-	}
+	// if err := authObj(kind, name, namespace, profile["preferred_email"].(string), profile["groups"].([]string)); err != nil {
+	//	return err
+	//}
 	crd, err := crd.GetByKind(kind, namespace, name)
 	if err != nil {
-		return makeError(http.StatusInternalServerError, "Can't create watcher %s/%s/%s", kind, namespace, name)
+		return makeError(http.StatusInternalServerError, "Can't create watcher %s/%s/%s, err:%s", kind, namespace, name, err)
 	}
 	return a.maybeNewSubsetBroker(sid, crd).ServeHTTP(w, r)
 }

@@ -9,6 +9,7 @@ import Logout from './lib/Logout.vue'
 import Profile from './lib/Profile.vue'
 import Token from './lib/Token.vue'
 import Pods from './lib/Pods.vue'
+import KObject from './lib/KObject.vue'
 
 import quasarUserOptions from './quasar-user-options'
 
@@ -33,6 +34,7 @@ function setup() {
       { path: '/', component: Login },
       { path: '/token', component: Token },
       { path: '/profile', component: Profile },
+      { path: '/k8s/:kind/:namespace/:name', component: KObject },
       { path: '/pods', component: Pods },
       { path: '/logout', component: Logout }
     ],
