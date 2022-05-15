@@ -17,6 +17,17 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+func authObj(kind, name, namespace string, owner string, groups []string) *appError {
+	obj, err := kube.GetByKind(kind, name, namespace)
+	if err != nil {
+		return makeError(http.StatusNotFound, "Can't find object by kind %s/%s/%s, err:%s", kind, namespace, name, err)
+	}
+	if !Authorize(obj, owner, groups) {
+		return makeError(http.StatusForbidden, "Not authorized to access object %s/%s/%s", kind, namespace, name)
+	}
+	return nil
+}
+
 func Authorize(obj metav1.Object, owner string, groups []string) bool {
 	labels := obj.GetLabels()
 	if groupLabel, ok := labels[constant.GroupLabel]; ok && len(groupLabel) > 0 {

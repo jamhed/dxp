@@ -18,13 +18,17 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+type BrokerMap map[string]map[string]*CrdBroker
+
 type App struct {
-	args   *args.Args
-	store  *sessions.FilesystemStore
-	auth   *auth.Auth
-	wg     sync.WaitGroup
-	groups map[string]string
-	ver    map[string]interface{}
+	args    *args.Args
+	store   *sessions.FilesystemStore
+	auth    *auth.Auth
+	brokers BrokerMap
+	subset  BrokerMap
+	wg      sync.WaitGroup
+	groups  map[string]string
+	ver     map[string]interface{}
 }
 
 func New() *App {
@@ -33,6 +37,8 @@ func New() *App {
 	a.store = sessions.NewFilesystemStore("sessions", []byte(a.args.SessionKey()))
 	a.store.MaxLength(0)
 	a.store.Options.Domain = a.args.BaseDomain()
+	a.brokers = make(BrokerMap)
+	a.subset = make(BrokerMap)
 	gob.Register(map[string]interface{}{})
 	go a.Serve()
 	a.auth = auth.New(a.args.OIDC())
@@ -73,6 +79,27 @@ func (fn httpErrHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := fn(w, r); err != nil {
 		log.Debug(err.Error)
 		http.Error(w, err.Error, err.Code)
+	}
+}
+
+type appHandler func(sid string, p map[string]interface{}, w http.ResponseWriter, r *http.Request) *appError
+
+func (a *App) appHandler(fn appHandler) httpErrHandler {
+	return func(w http.ResponseWriter, r *http.Request) *appError {
+		session, err := a.store.Get(r, "auth-session")
+		if err != nil {
+			return makeError(http.StatusInternalServerError, "Can't get session, error:%s", err)
+		}
+		pf := session.Values["profile"].(map[string]interface{})
+		return fn(session.ID, pf, w, r)
+	}
+}
+
+type appErrHandler func(w http.ResponseWriter, r *http.Request) *appError
+
+func (a *App) appErrHandler(fn appErrHandler) httpErrHandler {
+	return func(w http.ResponseWriter, r *http.Request) *appError {
+		return fn(w, r)
 	}
 }
 
@@ -147,6 +174,12 @@ func (a *App) Serve() {
 	r.HandleFunc("/token", a.Token)
 	r.Handle("/callback", httpErrHandler(a.AuthCallback))
 	r.HandleFunc("/logout", a.Logout)
+
+	r.Handle("/watch/{kind}", a.appHandler(a.watchKind))
+	r.Handle("/proxy/{namespace}/{name}/{port}/{rest:.*}", a.appErrHandler(a.proxyService))
+	r.Handle("/proxy/{namespace}/{name}/{port}", a.appErrHandler(a.proxyService))
+	r.Handle("/k8s/{kind}/{namespace}/{name}", a.appHandler(a.watchObject))
+
 	r.Use(a.authMiddleWare)
 	srv := &http.Server{
 		Handler: r,

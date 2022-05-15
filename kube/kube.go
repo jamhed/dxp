@@ -2,6 +2,7 @@ package kube
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -38,6 +39,22 @@ func GetService(name, namespace string) (*corev1.Service, error) {
 	return clientset.CoreV1().Services(namespace).Get(context.Background(), name, metav1.GetOptions{})
 }
 
+func GetPod(name, namespace string) (*corev1.Pod, error) {
+	clientset, err := GetClient()
+	if err != nil {
+		return nil, err
+	}
+	return clientset.CoreV1().Pods(namespace).Get(context.Background(), name, metav1.GetOptions{})
+}
+
+func GetPvc(name, namespace string) (*corev1.PersistentVolumeClaim, error) {
+	clientset, err := GetClient()
+	if err != nil {
+		return nil, err
+	}
+	return clientset.CoreV1().PersistentVolumeClaims(namespace).Get(context.Background(), name, metav1.GetOptions{})
+}
+
 func GetPodLogs(name, namespace, container string) (io.ReadCloser, error) {
 	config, _ := GetConfig()
 	clientset, err := kubernetes.NewForConfig(config)
@@ -47,4 +64,17 @@ func GetPodLogs(name, namespace, container string) (io.ReadCloser, error) {
 	podLogOpts := corev1.PodLogOptions{Container: container, Follow: true}
 	req := clientset.CoreV1().Pods(namespace).GetLogs(name, &podLogOpts)
 	return req.Stream(context.TODO())
+}
+
+func GetByKind(kind, name, namespace string) (metav1.Object, error) {
+	switch kind {
+	case "service":
+		return GetService(name, namespace)
+	case "pod":
+		return GetPod(name, namespace)
+	case "pvc":
+		return GetPvc(name, namespace)
+	default:
+		return nil, fmt.Errorf("Unknown kubernetes kind %s", kind)
+	}
 }
