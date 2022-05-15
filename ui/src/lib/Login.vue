@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-card class="fixed-center">
+    <q-card class="fixed-center" v-if="!isAuthenticated">
       <q-card-section>
         <div class="text-h6">Please authenticate</div>
       </q-card-section>
@@ -8,10 +8,9 @@
       <q-separator />
 
       <q-card-actions vertical>
-        <q-btn v-if="!isAuthenticated" @click="login" label="Login" icon="login" />
+        <q-btn @click="login" label="Login" icon="login" />
       </q-card-actions>
     </q-card>
-
   </div>
 </template>
 
