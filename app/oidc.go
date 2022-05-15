@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"crypto/rand"
+	"dxp/constant"
+	"dxp/crd"
 	"encoding/base64"
 	"fmt"
 	"net/http"
@@ -18,6 +20,26 @@ type BrokerDef struct {
 	Group    string
 	Version  string
 	Resource string
+}
+
+func (a *App) onLogin(sessionId string, profile map[string]interface{}) {
+	brokerDefs := []BrokerDef{
+		{"pvcs", "", "v1", "persistentvolumeclaims"},
+		{"services", "", "v1", "services"},
+		{"pods", "", "v1", "pods"},
+	}
+	groups := profile["groups"].([]interface{})
+	owner := ""
+	// groupSelector := fmt.Sprintf("%s in (%s)", constant.GroupLabel, strings.Join(groups, ","))
+	groupSelector := ""
+	selector := fmt.Sprintf("%s in (%s)", constant.IdLabel, owner)
+	for _, def := range brokerDefs {
+		broker := a.newBroker(sessionId, def.Name)
+		if len(groups) > 0 {
+			broker.AddCrd(crd.New(def.Group, def.Version, def.Resource).SetLabelSelector(groupSelector))
+		}
+		broker.AddCrd(crd.New(def.Group, def.Version, def.Resource).SetLabelSelector(selector))
+	}
 }
 
 func (a *App) AuthInitiate(w http.ResponseWriter, r *http.Request) {
@@ -88,6 +110,8 @@ func (a *App) AuthCallback(w http.ResponseWriter, r *http.Request) *appError {
 	log.Debugf("OIDC: id token claims: %s", profile)
 	session.Values["profile"] = profile
 	session.Values["access_token"] = token.AccessToken
+
+	a.onLogin(session.ID, profile)
 
 	redirectUrl := session.Values["redirect"]
 	delete(session.Values, "redirect")

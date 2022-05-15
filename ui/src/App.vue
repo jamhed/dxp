@@ -22,6 +22,12 @@
               </q-item-section>
               <q-item-section>Token</q-item-section>
             </q-item>
+            <q-item clickable to="/pods">
+              <q-item-section avatar>
+                <q-icon name="pod" />
+              </q-item-section>
+              <q-item-section>Pods</q-item-section>
+            </q-item>
             <q-item clickable to="/logout">
               <q-item-section avatar>
                 <q-icon name="logout" />

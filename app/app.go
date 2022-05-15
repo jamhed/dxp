@@ -55,6 +55,7 @@ func (a *App) SetVersion(version, commit, builddate string) *App {
 
 var bypassAuth []*regexp.Regexp = []*regexp.Regexp{
 	regexp.MustCompile("^/auth"),
+	regexp.MustCompile("^/profile$"),
 	regexp.MustCompile("^/logout$"),
 	regexp.MustCompile("^/callback.*$"),
 	regexp.MustCompile("^/ui/.*$"),

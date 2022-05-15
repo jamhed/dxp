@@ -8,6 +8,7 @@ import Login from './lib/Login.vue'
 import Logout from './lib/Logout.vue'
 import Profile from './lib/Profile.vue'
 import Token from './lib/Token.vue'
+import Pods from './lib/Pods.vue'
 
 import quasarUserOptions from './quasar-user-options'
 
@@ -29,10 +30,11 @@ function setup() {
   app.use(Quasar, quasarUserOptions)
   const router = createRouter({
     routes: [
-      { path: '/', name: 'login', component: Login },
+      { path: '/', component: Login },
       { path: '/token', component: Token },
-      { path: '/profile', name: 'profile', component: Profile },
-      { path: '/logout', name: 'logout', component: Logout }
+      { path: '/profile', component: Profile },
+      { path: '/pods', component: Pods },
+      { path: '/logout', component: Logout }
     ],
     history: createWebHashHistory()
   })

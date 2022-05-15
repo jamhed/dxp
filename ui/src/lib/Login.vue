@@ -8,7 +8,7 @@
       <q-separator />
 
       <q-card-actions vertical>
-        <q-btn @click="login" label="Login" icon="login" />
+        <q-btn @click="onLogin" label="Login" icon="login" />
       </q-card-actions>
     </q-card>
   </div>
@@ -17,4 +17,8 @@
 <script setup lang="ts">
 import { useAuth } from "../auth"
 const { isAuthenticated, login } = useAuth()
+
+function onLogin() {
+  login()
+}
 </script>
