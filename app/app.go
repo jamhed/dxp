@@ -93,7 +93,10 @@ func (a *App) Token(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	obj, err := json.Marshal(session.Values["token"])
+	obj, err := json.Marshal(session.Values["access_token"])
+	if err != nil {
+		log.Debugf("Can't get token from session, error:%s", err)
+	}
 	w.Write([]byte(obj))
 }
 

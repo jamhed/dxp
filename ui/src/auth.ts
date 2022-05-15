@@ -30,16 +30,29 @@ class Auth {
   profile() {
     return JSON.parse(localStorage.getItem('profile') || "{}")
   }
+
+  login() {
+    localStorage.clear()
+    window.location.href = '/auth'
+  }
+
+  logout() {
+    localStorage.clear()
+    window.location.href = '/logout'
+  }
 }
 
 let isAuthenticated: Ref<boolean>
 let checkAuth: () => any
 let profile: () => any
+let logout: () => any
+let login: () => any
+
 
 export function createAuth(url: string) {
-  ({ isAuthenticated, checkAuth, profile } = new Auth(url))
+  ({ isAuthenticated, checkAuth, profile, logout, login } = new Auth(url))
 }
 
 export function useAuth() {
-  return { isAuthenticated, checkAuth, profile }
+  return { isAuthenticated, checkAuth, profile, logout, login }
 }

@@ -7,6 +7,8 @@ import { createAuth, useAuth } from './auth'
 import Login from './lib/Login.vue'
 import Logout from './lib/Logout.vue'
 import Profile from './lib/Profile.vue'
+import Token from './lib/Token.vue'
+
 import quasarUserOptions from './quasar-user-options'
 
 createAuth("/profile")
@@ -28,6 +30,7 @@ function setup() {
   const router = createRouter({
     routes: [
       { path: '/', name: 'login', component: Login },
+      { path: '/token', component: Token },
       { path: '/profile', name: 'profile', component: Profile },
       { path: '/logout', name: 'logout', component: Logout }
     ],

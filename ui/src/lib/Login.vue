@@ -1,10 +1,9 @@
 <template>
   <div class="q-pa-md">
     <div class="row">
-      <div class="col" v-if="isAuth"></div>
+      <div class="col" v-if="isAuthenticated"></div>
       <div class="col" v-else>
-        <q-btn @click="loginWithRedirect" label="Login" icon="login" />
-        <q-btn @click="profile" label="Profile" icon="profile" />
+        <q-btn @click="login" label="Login" icon="login" />
       </div>
     </div>
   </div>
@@ -12,13 +11,5 @@
 
 <script setup lang="ts">
 import { useAuth } from "../auth"
-const { isAuth } = useAuth()
-
-function loginWithRedirect() {
-  window.location.href = '/auth'
-}
-
-function profile() {
-  fetch("/profile")
-}
+const { isAuthenticated, login } = useAuth()
 </script>

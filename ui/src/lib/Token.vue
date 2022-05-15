@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import jwt_decode from "jwt-decode"
 import JsonEditor from './JsonEditor.vue'
 
 const token = ref<{
@@ -12,9 +13,11 @@ const token = ref<{
 }>();
 
 async function getToken() {
+  const re = await fetch("/token")
+  const value = await re.json()
   token.value = {
-    "decoded": {},
-    "encoded": ""
+    "decoded": jwt_decode(value),
+    "encoded": value
   }
 }
 onMounted(getToken)
