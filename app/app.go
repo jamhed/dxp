@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"net/http"
+	"net/url"
 
 	log "github.com/sirupsen/logrus"
 
@@ -100,6 +101,40 @@ func (a *App) Token(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(obj))
 }
 
+func (a *App) authMiddleWare(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", a.args.UIRootDomain())
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		for _, re := range bypassAuth {
+			if re.MatchString(r.RequestURI) {
+				log.Debugf("HTTP: skip auth, from:%s %v", r.RemoteAddr, r.RequestURI)
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+		session, err := a.store.Get(r, "auth-session")
+		if err != nil {
+			log.Debugf("Can't get session, error:%s", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		p, ok := session.Values["profile"]
+		if !ok {
+			log.Debugf("Not authorized, request:%s", r.RequestURI)
+			http.Redirect(w, r, "/auth?redirect="+url.PathEscape(r.RequestURI), http.StatusFound)
+			return
+		}
+		log.Debugf("HTTP: %s from:%s %s", p.(map[string]interface{})["preferred_username"], r.RemoteAddr, r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (a *App) Serve() {
 	a.wg.Add(1)
 	defer a.wg.Done()
@@ -112,6 +147,7 @@ func (a *App) Serve() {
 	r.HandleFunc("/token", a.Token)
 	r.Handle("/callback", httpErrHandler(a.AuthCallback))
 	r.HandleFunc("/logout", a.Logout)
+	r.Use(a.authMiddleWare)
 	srv := &http.Server{
 		Handler: r,
 		Addr:    bindAddr,
