@@ -15,7 +15,7 @@ class Config {
       this.baseURL = ''
     }
   }
-  makeURL(url: string): string {
+  makeURL = (url: string): string => {
     return `${this.baseURL}${url}`
   }
 }
