@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-table title="Services" :rows="rows" :columns="columns" :pagination="pagination" row-key="name">
+    <q-table title="Services" :rows="rows" :columns="columns" :pagination="pagination" row-key="metadata.uid">
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="namespace" :props="props">
@@ -31,15 +31,15 @@ const pagination = { rowsPerPage: 50, sortBy: 'creationDate' }
 interface ColumnType {
   name: string
   label: string
-  field: string | ((row: any) => any);
+  field: string
   sortable?: boolean
   align: "left" | "right" | "center"
 }
 
 const columns: Array<ColumnType> = [
-  { align: 'left', name: 'namespace', sortable: true, label: 'namespace', field: (row: any) => row.metadata.namespace },
-  { align: 'left', name: 'name', sortable: true, label: 'name', field: (row: any) => row.metadata.name },
-  { align: 'left', name: 'links', sortable: true, label: 'links', field: (row: any) => row.metadata.name },
+  { align: 'left', name: 'namespace', sortable: true, label: 'namespace', field: 'namespace' },
+  { align: 'left', name: 'name', sortable: true, label: 'name', field: 'name' },
+  { align: 'left', name: 'links', sortable: true, label: 'links', field: 'links' }
 ]
 
 function object_uri(row: any) {
