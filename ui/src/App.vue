@@ -28,6 +28,12 @@
               </q-item-section>
               <q-item-section>Pods</q-item-section>
             </q-item>
+            <q-item clickable to="/services">
+              <q-item-section avatar>
+                <q-icon name="electrical_services" />
+              </q-item-section>
+              <q-item-section>Services</q-item-section>
+            </q-item>
             <q-item clickable to="/logout">
               <q-item-section avatar>
                 <q-icon name="logout" />

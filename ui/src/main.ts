@@ -4,13 +4,13 @@ import { createApp, h } from 'vue'
 import { createRouter, createWebHashHistory, NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import App from './App.vue'
 import { createAuth, useAuth } from './auth'
+import KObject from './lib/KObject.vue'
 import Login from './lib/Login.vue'
 import Logout from './lib/Logout.vue'
-import Profile from './lib/Profile.vue'
-import Token from './lib/Token.vue'
 import Pods from './lib/Pods.vue'
-import KObject from './lib/KObject.vue'
-
+import Profile from './lib/Profile.vue'
+import Services from './lib/Services.vue'
+import Token from './lib/Token.vue'
 import quasarUserOptions from './quasar-user-options'
 
 createAuth("/profile")
@@ -36,6 +36,7 @@ function setup() {
       { path: '/profile', component: Profile },
       { path: '/k8s/:kind/:namespace/:name', component: KObject },
       { path: '/pods', component: Pods },
+      { path: '/services', component: Services },
       { path: '/logout', component: Logout }
     ],
     history: createWebHashHistory()
