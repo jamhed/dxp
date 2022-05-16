@@ -30,7 +30,6 @@ func (a *App) onLogin(sessionId string, profile map[string]interface{}) {
 		{"pods", "", "v1", "pods"},
 	}
 	groups := profileGroups(profile)
-	log.Infof("%s", groups)
 	groupSelector := fmt.Sprintf("%s in (%s)", constant.GroupLabel, strings.Join(groups, ","))
 	selector := fmt.Sprintf("%s in (%s)", constant.IdLabel, profileUser(profile))
 	for _, def := range brokerDefs {

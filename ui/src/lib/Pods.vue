@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { reactive, computed } from 'vue'
+import { useStream } from '../sse'
 
 const router = useRouter()
 
@@ -15,52 +15,22 @@ const baseURL = 'http://localhost:8080'
 
 const pagination = { rowsPerPage: 50, sortBy: 'creationDate' }
 
-const columns = [
+interface ColumnType {
+  name: string
+  label: string
+  field: string | ((row: any) => any);
+  sortable?: boolean
+  align: "left" | "right" | "center"
+}
+
+const columns: Array<ColumnType> = [
   { align: 'left', name: 'namespace', sortable: true, label: 'namespace', field: (row: any) => row.metadata.namespace },
   { align: 'left', name: 'name', sortable: true, label: 'name', field: (row: any) => row.metadata.name }
 ]
-
-function objKey(obj: any) {
-  let key = obj.kind + obj.metadata.namespace + obj.metadata.name
-  return key
-}
-
-const rows = computed(() => Object.values(cache).sort((a, b) => objKey(a).localeCompare(objKey(b))))
-
-type Cache = {
-  [key: string]: any
-}
-
-const cache: Cache = reactive({})
-
-function sse(url: string, onMessage: (event: MessageEvent<any>) => any): EventSource {
-  let es = new EventSource(baseURL + url, { withCredentials: true })
-  es.onerror = (err) => console.log("SSE", err)
-  es.onmessage = onMessage
-  return es
-}
 
 function onClick(_ev: any, row: any) {
   router.push(`/k8s/pod/${row.metadata.namespace}/${row.metadata.name}`)
 }
 
-function setupStream() {
-  sse('/watch/pods', (event: MessageEvent<any>) => {
-    var msg = JSON.parse(event.data)
-    var obj = msg.Content
-    switch (msg.Action) {
-      case "delete":
-        delete cache[obj.metadata.uid]
-        break
-      case "add":
-        cache[obj.metadata.uid] = obj
-        break
-      case "update":
-        cache[obj.metadata.uid] = obj
-        break
-    }
-  })
-}
-
-setupStream()
+const { rows } = useStream(`${baseURL}/watch/pods`)
 </script>
