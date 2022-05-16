@@ -4,6 +4,7 @@ import { createApp, h } from 'vue'
 import { createRouter, createWebHashHistory, NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import App from './App.vue'
 import { createAuth, useAuth } from './auth'
+import { createConfig } from './config'
 import KObject from './lib/KObject.vue'
 import Login from './lib/Login.vue'
 import Logout from './lib/Logout.vue'
@@ -14,6 +15,7 @@ import Token from './lib/Token.vue'
 import quasarUserOptions from './quasar-user-options'
 
 createAuth("/profile")
+createConfig()
 
 const { checkAuth } = useAuth()
 

@@ -23,8 +23,9 @@
 
 <script setup lang="ts">
 import { useStream } from '../sse'
+import { useConfig } from '../config'
 
-const baseURL = 'http://localhost:8080'
+const { makeURL } = useConfig()
 
 const pagination = { rowsPerPage: 50, sortBy: 'creationDate' }
 
@@ -47,8 +48,8 @@ function object_uri(row: any) {
 }
 
 function proxy_uri(port: string, row: any): string {
-  return `${baseURL}/proxy/${row.metadata.namespace}/${row.metadata.name}/${port}`
+  return makeURL(`/proxy/${row.metadata.namespace}/${row.metadata.name}/${port}`)
 }
 
-const { rows } = useStream(`${baseURL}/watch/services`)
+const { rows } = useStream(makeURL('/watch/services'))
 </script>

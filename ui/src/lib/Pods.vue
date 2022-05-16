@@ -17,8 +17,9 @@
 
 <script setup lang="ts">
 import { useStream } from '../sse'
+import { useConfig } from '../config'
 
-const baseURL = 'http://localhost:8080'
+const { makeURL } = useConfig()
 
 const pagination = { rowsPerPage: 50, sortBy: 'creationDate' }
 
@@ -39,5 +40,5 @@ const columns: Array<ColumnType> = [
   { align: 'left', name: 'name', sortable: true, label: 'name', field: 'name' }
 ]
 
-const { rows } = useStream(`${baseURL}/watch/pods`)
+const { rows } = useStream(makeURL('/watch/pods'))
 </script>
